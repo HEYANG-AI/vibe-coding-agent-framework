@@ -19,7 +19,7 @@ This is a universal configurable enterprise-grade cross-platform intelligent age
 ## 📁 Directory Structure
 
 ```
-airchina_agent_platform/
+vibe-coding-agent-framework_agent_platform/
 ├── SKILL.md              # Main skill documentation
 ├── config.yaml           # User configuration file
 ├── core/
@@ -87,7 +87,7 @@ $env:AIRCHINA_PASSWORD="your_password"
 # Platform Configuration
 platform:
   name: "Enterprise Agent Platform"
-  base_url: "https://aiagenttest.airchina.com.cn/agent/base/desktop/index"
+  base_url: "https://aiagenttest.vibe-coding-agent-framework.com.cn/agent/base/desktop/index"
   timeout: 30
   screenshot_dir: "./logs/screenshots"
 
@@ -109,7 +109,7 @@ security:
   username_env: "AIRCHINA_USERNAME"
   password_env: "AIRCHINA_PASSWORD"
   session_persistence: true
-  allowed_domains: ["airchina.com.cn"]  # Security whitelist
+  allowed_domains: ["vibe-coding-agent-framework.com.cn"]  # Security whitelist
 
 # Element Locator Configuration (customize to adapt your platform)
 elements:

@@ -24,10 +24,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-logger = logging.getLogger("AirChinaAgentRunner")
+logger = logging.getLogger("vibe-coding-agent-frameworkAgentRunner")
 
 
-class AirChinaAgentPlatform:
+class vibe-coding-agent-frameworkAgentPlatform:
     def __init__(self):
         self.config_loader = ConfigLoader()
         self.config_loader.load(str(SKILL_DIR / "config.yaml"))
@@ -37,7 +37,7 @@ class AirChinaAgentPlatform:
         self.publish_flow = None
 
     def initialize(self):
-        logger.info("Initializing Air China Agent Platform Runner...")
+        logger.info("Initializing vibe-coding-agent-framework Agent Platform Runner...")
         self.browser = BrowserAdapter(str(SKILL_DIR / "config.yaml"))
         self.login_flow = LoginFlow(self.browser, str(SKILL_DIR / "config.yaml"))
         self.create_agent_flow = CreateAgentFlow(self.browser, str(SKILL_DIR / "config.yaml"))
@@ -148,7 +148,7 @@ class AirChinaAgentPlatform:
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Air China Agent Platform Automation")
+    parser = argparse.ArgumentParser(description="vibe-coding-agent-framework Agent Platform Automation")
     parser.add_argument('--task', type=str, help='Natural language task')
     parser.add_argument('--username', type=str, help='Username for login')
     parser.add_argument('--password', type=str, help='Password for login')
@@ -159,7 +159,7 @@ def main():
 
     args = parser.parse_args()
 
-    platform = AirChinaAgentPlatform()
+    platform = vibe-coding-agent-frameworkAgentPlatform()
 
     if args.task:
         result = platform.execute_natural_language(args.task)

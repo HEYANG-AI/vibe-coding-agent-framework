@@ -18,7 +18,7 @@ def main():
     config_loader = ConfigLoader()
     config_loader.load()
 
-    logger = Logger.setup("AirChinaAgentMain", config_loader=config_loader)
+    logger = Logger.setup("vibe-coding-agent-frameworkAgentMain", config_loader=config_loader)
     logger.info("=" * 60)
     logger.info("🏆 Enterprise Agent Platform Automation Framework")
     logger.info("=" * 60)
