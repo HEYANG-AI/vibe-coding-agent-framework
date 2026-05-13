@@ -20,7 +20,7 @@ def main():
     config_loader = ConfigLoader()
     config_loader.load()
     
-    logger = Logger.setup("AirChinaAgentMain", config_loader=config_loader)
+    logger = Logger.setup("vibe-coding-agent-frameworkAgentMain", config_loader=config_loader)
     logger.info("=" * 60)
     logger.info("🏆 企业智能体平台自动化 Skill - 赛事获奖级顶配版")
     logger.info("=" * 60)

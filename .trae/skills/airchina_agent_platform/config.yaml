@@ -1,6 +1,6 @@
 platform:
   name: "企业智能体平台"
-  base_url: "https://aiagenttest.airchina.com.cn/agent/base/desktop/index"
+  base_url: "https://aiagenttest.vibe-coding-agent-framework.com.cn/agent/base/desktop/index"
   timeout: 30
   screenshot_dir: "./logs/screenshots"
 
@@ -35,7 +35,7 @@ security:
   username_env: "AIRCHINA_USERNAME"
   password_env: "AIRCHINA_PASSWORD"
   session_persistence: true
-  allowed_domains: ["airchina.com.cn"]  # 安全白名单
+  allowed_domains: ["vibe-coding-agent-framework.com.cn"]  # 安全白名单
 
 self_healing:
   enabled: true

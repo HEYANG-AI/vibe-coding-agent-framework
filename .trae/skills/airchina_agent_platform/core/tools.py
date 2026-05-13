@@ -65,7 +65,7 @@ class SensitiveDataFilter(logging.Filter):
 
 class Logger:
     @staticmethod
-    def setup(name: str = "AirChinaAgent", level: int = logging.INFO, config_loader=None) -> logging.Logger:
+    def setup(name: str = "vibe-coding-agent-frameworkAgent", level: int = logging.INFO, config_loader=None) -> logging.Logger:
         log_dir = Path("./logs")
         log_dir.mkdir(parents=True, exist_ok=True)
 

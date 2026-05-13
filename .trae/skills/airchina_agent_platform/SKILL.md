@@ -19,7 +19,7 @@
 ## 📁 目录结构
 
 ```
-airchina_agent_platform/
+vibe-coding-agent-framework_agent_platform/
 ├── SKILL.md              # 主技能文档
 ├── config.yaml           # 用户配置文件
 ├── core/
@@ -87,7 +87,7 @@ $env:AIRCHINA_PASSWORD="your_password"
 # 平台配置
 platform:
   name: "企业智能体平台"
-  base_url: "https://aiagenttest.airchina.com.cn/agent/base/desktop/index"
+  base_url: "https://aiagenttest.vibe-coding-agent-framework.com.cn/agent/base/desktop/index"
   timeout: 30
   screenshot_dir: "./logs/screenshots"
 
@@ -109,7 +109,7 @@ security:
   username_env: "AIRCHINA_USERNAME"
   password_env: "AIRCHINA_PASSWORD"
   session_persistence: true
-  allowed_domains: ["airchina.com.cn"]  # 安全白名单，防止访问非法域名
+  allowed_domains: ["vibe-coding-agent-framework.com.cn"]  # 安全白名单，防止访问非法域名
 
 # 元素定位配置（自定义适配自己的平台）
 elements:
@@ -242,7 +242,7 @@ Skill 提供了完整的原子技能，可灵活组合：
 
 ```bash
 # 完整流程测试
-cd .trae/skills/airchina_agent_platform
+cd .trae/skills/vibe-coding-agent-framework_agent_platform
 python -m tests.test_full_flow
 
 # 登录测试
