@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4abce63c557c8443156e9ac240dfb245179a4d4a2e13682c6d2ac8770352a3ad
-size 31
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Dev/test scripts
+analyze_logged_in.py
+capture_api.py
+check_*.py
+create_agent*.py
+create_workflow_*.py
+debug_*.py
+detect_*.py
+find_*.py
+geetest_*.py
+login_*.py
+manual_login.py
+show_agents.py
+test_*.py
+try_*.py
+upgrade_to_*.py
+validate_skill.py
+
+# Generated artifacts
+screenshots/
+logs/
