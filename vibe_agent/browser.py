@@ -23,12 +23,13 @@ from .config import get_config, DEFAULT_CONFIG
 class BrowserManager:
     """浏览器管理器，封装 Playwright 的启动、页面管理、截图"""
 
-    def __init__(self, headless: Optional[bool] = None, slow_mo: Optional[int] = None):
+    def __init__(self, headless: Optional[bool] = None, slow_mo: Optional[int] = None, browser_type: str = "webkit"):
         cfg = get_config()
         self.headless = headless if headless is not None else cfg.get("headless", False)
         self.slow_mo = slow_mo if slow_mo is not None else cfg.get("slow_mo", 500)
         self.timeout = cfg.get("timeout", 30000)
         self.stealth = cfg.get("stealth", True)
+        self.browser_type = browser_type.lower()  # webkit, chromium, firefox
 
         self._playwright: Optional[Playwright] = None
         self._browser: Optional[Browser] = None
@@ -40,19 +41,31 @@ class BrowserManager:
         self.screenshot_dir.mkdir(exist_ok=True)
 
     def start(self, user_data_dir: Optional[str] = None, use_system_chrome: bool = False) -> Page:
-        """启动浏览器并返回页面对象"""
+        """启动浏览器并返回页面对象
+        :param user_data_dir: 用户数据目录（用于持久化登录状态）
+        :param use_system_chrome: 是否使用系统 Chrome（忽略 browser_type 设置）
+        """
         self._playwright = sync_playwright().start()
+
+        # 根据浏览器类型选择合适的启动选项
+        if use_system_chrome:
+            browser_type = "chromium"
+        else:
+            browser_type = self.browser_type
 
         launch_options = {
             "headless": self.headless,
             "slow_mo": self.slow_mo,
-            "args": [
+        }
+
+        # Chrome 特有参数
+        if browser_type == "chromium":
+            launch_options["args"] = [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
-            ],
-        }
+            ]
 
         context_options = {
             "viewport": {"width": 1920, "height": 1080},
@@ -61,14 +74,17 @@ class BrowserManager:
             "ignore_https_errors": True,
         }
 
+        # 获取浏览器对象
+        browser_obj = getattr(self._playwright, browser_type)
+
         if use_system_chrome and user_data_dir:
-            # 使用系统 Chrome + 你的配置（保留登录态）
-            self._context = self._playwright.chromium.launch_persistent_context(
+            # 使用系统 Chrome + 用户配置（保留登录态）
+            self._context = browser_obj.launch_persistent_context(
                 user_data_dir=user_data_dir,
                 channel="chrome",
                 headless=self.headless,
                 slow_mo=self.slow_mo,
-                args=launch_options["args"],
+                args=launch_options.get("args", []),
                 **context_options,
             )
             self._page = self._context.pages[0] if self._context.pages else self._context.new_page()
@@ -76,13 +92,13 @@ class BrowserManager:
             persistent_path = Path(user_data_dir)
             persistent_path.mkdir(parents=True, exist_ok=True)
             merged_opts = {**launch_options, **context_options}
-            self._context = self._playwright.chromium.launch_persistent_context(
+            self._context = browser_obj.launch_persistent_context(
                 user_data_dir=str(persistent_path),
                 **merged_opts
             )
             self._page = self._context.pages[0] if self._context.pages else self._context.new_page()
         else:
-            self._browser = self._playwright.chromium.launch(**launch_options)
+            self._browser = browser_obj.launch(**launch_options)
             self._context = self._browser.new_context(**context_options)
             self._page = self._context.new_page()
 
