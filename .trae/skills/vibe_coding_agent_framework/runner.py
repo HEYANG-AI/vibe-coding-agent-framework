@@ -27,7 +27,7 @@ logging.basicConfig(
 logger = logging.getLogger("vibe-coding-agent-frameworkAgentRunner")
 
 
-class vibe-coding-agent-frameworkAgentPlatform:
+class AirAgentPlatform:
     def __init__(self):
         self.config_loader = ConfigLoader()
         self.config_loader.load(str(SKILL_DIR / "config.yaml"))
@@ -73,7 +73,7 @@ class vibe-coding-agent-frameworkAgentPlatform:
                 logger.error(f"Login failed: {login_result.message}")
                 return {"success": False, "step": "login", "message": login_result.message}
 
-            agent_name = agent_name or f"AutoAgent_{int(os.time.time())}"
+            agent_name = agent_name or f"AutoAgent_{int(time.time())}"
 
             create_result = self.create_agent(agent_name, description, create_workflow=True)
             if not create_result.success:
@@ -159,7 +159,7 @@ def main():
 
     args = parser.parse_args()
 
-    platform = vibe-coding-agent-frameworkAgentPlatform()
+    platform = AirAgentPlatform()
 
     if args.task:
         result = platform.execute_natural_language(args.task)
