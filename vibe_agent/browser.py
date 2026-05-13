@@ -39,7 +39,7 @@ class BrowserManager:
         self.screenshot_dir = Path(__file__).resolve().parent.parent / "screenshots"
         self.screenshot_dir.mkdir(exist_ok=True)
 
-    def start(self, user_data_dir: Optional[str] = None) -> Page:
+    def start(self, user_data_dir: Optional[str] = None, use_system_chrome: bool = False) -> Page:
         """启动浏览器并返回页面对象"""
         self._playwright = sync_playwright().start()
 
@@ -61,7 +61,18 @@ class BrowserManager:
             "ignore_https_errors": True,
         }
 
-        if user_data_dir:
+        if use_system_chrome and user_data_dir:
+            # 使用系统 Chrome + 你的配置（保留登录态）
+            self._context = self._playwright.chromium.launch_persistent_context(
+                user_data_dir=user_data_dir,
+                channel="chrome",
+                headless=self.headless,
+                slow_mo=self.slow_mo,
+                args=launch_options["args"],
+                **context_options,
+            )
+            self._page = self._context.pages[0] if self._context.pages else self._context.new_page()
+        elif user_data_dir:
             persistent_path = Path(user_data_dir)
             persistent_path.mkdir(parents=True, exist_ok=True)
             merged_opts = {**launch_options, **context_options}
