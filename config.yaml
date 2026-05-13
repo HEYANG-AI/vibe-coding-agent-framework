@@ -1,0 +1,61 @@
+platform:
+  name: "Enterprise Agent Platform"
+  base_url: "https://aiagenttest.airchina.com.cn/agent/base/desktop/index"
+  timeout: 30
+  screenshot_dir: "./logs/screenshots"
+
+browser:
+  type: "chrome"
+  headless: false
+  window_size: [1920, 1080]
+  user_data_dir: null
+
+retry:
+  max_attempts: 3
+  delay_seconds: 2
+  exponential_backoff: true
+
+wait:
+  implicit: 10
+  explicit: 15
+  polling_interval: 0.5
+
+learning:
+  enabled: true
+  cache_dir: "./logs/learning_cache"
+  auto_relearn_on_change: true
+
+logging:
+  level: "INFO"
+  log_dir: "./logs"
+  screenshot_on_failure: true
+  mask_sensitive: true
+
+security:
+  username_env: "AIRCHINA_USERNAME"
+  password_env: "AIRCHINA_PASSWORD"
+  session_persistence: true
+  allowed_domains: ["airchina.com.cn"]
+
+self_healing:
+  enabled: true
+  max_retry: 3
+  screenshot_analysis: true
+  semantic_matching: true
+
+elements:
+  login:
+    username_input: ["//input[@type='text']", "//input[@name='username']", "//input[contains(@placeholder, '用户')]"]
+    password_input: ["//input[@type='password']", "//input[@name='password']", "//input[contains(@placeholder, '密码')]"]
+    login_button: ["//button[@type='submit']", "//button[contains(text(), '登录')]", "//button[contains(text(), '登陆')]"]
+  menu:
+    agent_menu: ["//*[contains(text(), 'Agent')]", "//*[contains(text(), '智能体')]", "//a[contains(@href, 'agent')]"]
+    new_agent: ["//button[contains(text(), '新建')]", "//*[contains(@class, 'btn') and contains(text(), '新建')]"]
+    publish_agent: ["//button[contains(text(), '发布')]", "//*[contains(text(), '上线')]"]
+  canvas:
+    add_node: ["//*[contains(@class, 'node')]//*[contains(@class, 'add')]", "//button[contains(@class, 'add')]"]
+    canvas_area: ["//*[contains(@class, 'canvas')]", "//*[contains(@id, 'canvas')]"]
+
+demo:
+  enabled: true
+  demo_url: "https://demo.aiplatform.com"
