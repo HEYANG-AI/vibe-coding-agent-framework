@@ -4,7 +4,7 @@ __pycache__/
 *.pyc
 
 # Dev/test scripts (root only, not under tests/)
-/analyze_logged_in.py
+/analyze_*.py
 /capture_api.py
 /check_*.py
 /create_agent*.py
