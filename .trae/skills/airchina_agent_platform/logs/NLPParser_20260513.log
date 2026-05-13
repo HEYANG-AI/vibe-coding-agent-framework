@@ -1,0 +1,8 @@
+2026-05-13 07:00:51,067 - NLPParser - INFO - Parsing command: 前往企业智能体平台
+2026-05-13 07:00:51,067 - NLPParser - INFO - Detected intent: navigate
+2026-05-13 07:00:51,067 - NLPParser - INFO - Parsing command: 登录系统
+2026-05-13 07:00:51,067 - NLPParser - INFO - Detected intent: login
+2026-05-13 07:00:51,068 - NLPParser - INFO - Parsing command: 新建一个业务智能体
+2026-05-13 07:00:51,068 - NLPParser - INFO - Detected intent: new_agent
+2026-05-13 07:00:51,068 - NLPParser - INFO - Parsing command: 全自动创建业务智能体并发布
+2026-05-13 07:00:51,068 - NLPParser - INFO - Detected intent: full_flow
