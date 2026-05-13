@@ -7,7 +7,6 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 SKILL_DIR = Path(__file__).parent
 
 sys.path.insert(0, str(SKILL_DIR))
-sys.path.insert(0, str(PROJECT_ROOT))
 
 os.chdir(SKILL_DIR)
 
