@@ -27,7 +27,7 @@ class LoginFlow:
 
         self.browser = browser or BrowserAdapter(config_path)
         self.learning = LearningEngine(self.browser, config_path)
-        self.healing = SelfHealingEngine(self.browser, self.learning, config_path)
+        self.healing = SelfHealingEngine(self.browser, self.config_loader)
         self.screenshot_mgr = ScreenshotManager()
         self.step_executor = StepExecutor(self.browser, self.screenshot_mgr)
         self.tools = Tools()

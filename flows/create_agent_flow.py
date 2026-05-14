@@ -25,7 +25,7 @@ class CreateAgentFlow:
                  config_path: Optional[str] = None):
         self.browser = browser or BrowserAdapter()
         self.learning = LearningEngine(self.browser, config_path)
-        self.healing = SelfHealingEngine(self.browser, self.learning, config_path)
+        self.healing = SelfHealingEngine(self.browser, self.learning.config_loader)
         self.screenshot_mgr = ScreenshotManager()
         self.step_executor = StepExecutor(self.browser, self.screenshot_mgr)
         self.tools = Tools()

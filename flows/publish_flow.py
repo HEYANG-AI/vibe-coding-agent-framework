@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from core.browser_adapter import BrowserAdapter, Locator
 from core.learning_engine import LearningEngine
 from core.self_healing import SelfHealingEngine
-from core.tools import Tools, StepExecutor, ScreenshotManager
+from core.tools import Tools, StepExecutor, ScreenshotManager, ConfigLoader
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +23,11 @@ class PublishResult:
 class PublishFlow:
     def __init__(self, browser: Optional[BrowserAdapter] = None,
                  config_path: Optional[str] = None):
-        self.browser = browser or BrowserAdapter()
-        self.learning = LearningEngine(self.browser, config_path)
-        self.healing = SelfHealingEngine(self.browser, self.learning, config_path)
+        self.config_loader = ConfigLoader()
+        self.config_loader.load(config_path)
+        self.browser = browser or BrowserAdapter(config_path)
+        self.learning = LearningEngine(self.browser, self.config_loader)
+        self.healing = SelfHealingEngine(self.browser, self.config_loader)
         self.screenshot_mgr = ScreenshotManager()
         self.step_executor = StepExecutor(self.browser, self.screenshot_mgr)
         self.tools = Tools()

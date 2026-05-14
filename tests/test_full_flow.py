@@ -16,184 +16,56 @@ logger = Logger.setup("TestFullFlow")
 
 
 class TestFullFlow:
-    def __init__(self):
+    config_loader = None
+    browser = None
+    login_flow = None
+    create_agent_flow = None
+    publish_flow = None
+    agent_name = None
+
+    def setup_method(self):
+        logger.info("Setting up test environment...")
         self.config_loader = ConfigLoader()
         self.config_loader.load()
-        self.browser = None
-        self.login_flow = None
-        self.create_agent_flow = None
-        self.publish_flow = None
-        self.results = []
-        self.agent_name = None
-
-    def setup(self):
-        logger.info("Setting up test environment...")
         self.browser = BrowserAdapter()
         self.login_flow = LoginFlow(self.browser)
         self.create_agent_flow = CreateAgentFlow(self.browser)
         self.publish_flow = PublishFlow(self.browser)
         logger.info("Test environment ready")
 
-    def teardown(self):
+    def teardown_method(self):
         logger.info("Tearing down test environment...")
         if self.browser:
             self.browser.close()
         logger.info("Test environment closed")
 
-    def test_step_1_login(self):
-        result = {"step": 1, "name": "login", "success": False, "message": "", "duration": 0.0}
-
-        start_time = time.time()
-
-        try:
-            login_result = self.login_flow.execute(
-                username=self.config_loader.get_credential('username'),
-                password=self.config_loader.get_credential('password'),
-                use_session=True
-            )
-
-            result["success"] = login_result.success
-            result["message"] = login_result.message
-
-            if login_result.success:
-                logger.info(f"Step 1 (Login) PASSED: {login_result.message}")
-            else:
-                logger.error(f"Step 1 (Login) FAILED: {login_result.message}")
-
-        except Exception as e:
-            result["message"] = f"Login exception: {str(e)}"
-            logger.error(result["message"])
-
-        result["duration"] = time.time() - start_time
-        self.results.append(result)
-        return result
-
-    def test_step_2_create_agent(self):
-        result = {"step": 2, "name": "create_agent", "success": False, "message": "", "duration": 0.0}
-
-        start_time = time.time()
-
-        try:
-            self.agent_name = f"FullFlowAgent_{int(time.time())}"
-
-            create_result = self.create_agent_flow.execute(
-                agent_name=self.agent_name,
-                description="完整流程测试创建的Agent",
-                create_workflow=True
-            )
-
-            result["success"] = create_result.success
-            result["message"] = create_result.message
-            result["agent_name"] = self.agent_name
-
-            if create_result.success:
-                logger.info(f"Step 2 (Create Agent) PASSED: {self.agent_name}")
-            else:
-                logger.error(f"Step 2 (Create Agent) FAILED: {create_result.message}")
-
-        except Exception as e:
-            result["message"] = f"Create agent exception: {str(e)}"
-            logger.error(result["message"])
-
-        result["duration"] = time.time() - start_time
-        self.results.append(result)
-        return result
-
-    def test_step_3_publish(self):
-        result = {"step": 3, "name": "publish", "success": False, "message": "", "duration": 0.0}
-
-        start_time = time.time()
-
-        try:
-            publish_result = self.publish_flow.execute(
-                agent_name=self.agent_name
-            )
-
-            result["success"] = publish_result.success
-            result["message"] = publish_result.message
-
-            if publish_result.success:
-                logger.info(f"Step 3 (Publish) PASSED: {publish_result.message}")
-            else:
-                logger.error(f"Step 3 (Publish) FAILED: {publish_result.message}")
-
-        except Exception as e:
-            result["message"] = f"Publish exception: {str(e)}"
-            logger.error(result["message"])
-
-        result["duration"] = time.time() - start_time
-        self.results.append(result)
-        return result
-
     def test_full_flow(self):
-        result = {"name": "test_full_flow", "success": False, "message": "", "steps": []}
-
         logger.info("=" * 60)
         logger.info("Starting Full Flow Test")
         logger.info("=" * 60)
 
-        try:
-            step1 = self.test_step_1_login()
-            if not step1["success"]:
-                result["message"] = "Full flow failed at login step"
-                self.results.append(result)
-                return result
+        login_result = self.login_flow.execute(
+            username=self.config_loader.get_credential('username'),
+            password=self.config_loader.get_credential('password'),
+            use_session=True
+        )
+        assert login_result.success, f"Login failed: {login_result.message}"
+        logger.info(f"Login PASSED: {login_result.message}")
 
-            step2 = self.test_step_2_create_agent()
-            if not step2["success"]:
-                result["message"] = "Full flow failed at create agent step"
-                self.results.append(result)
-                return result
+        self.agent_name = f"FullFlowAgent_{int(time.time())}"
+        create_result = self.create_agent_flow.execute(
+            agent_name=self.agent_name,
+            description="完整流程测试创建的Agent",
+            create_workflow=True
+        )
+        assert create_result.success, f"Create agent failed: {create_result.message}"
+        logger.info(f"Create Agent PASSED: {self.agent_name}")
 
-            step3 = self.test_step_3_publish()
-            if not step3["success"]:
-                result["message"] = "Full flow failed at publish step"
-                self.results.append(result)
-                return result
+        publish_result = self.publish_flow.execute(agent_name=self.agent_name)
+        assert publish_result.success, f"Publish failed: {publish_result.message}"
+        logger.info(f"Publish PASSED: {publish_result.message}")
 
-            result["success"] = True
-            result["message"] = f"Full flow completed successfully for agent: {self.agent_name}"
-            logger.info(result["message"])
-
-        except Exception as e:
-            result["message"] = f"Full flow exception: {str(e)}"
-            logger.error(result["message"])
-
-        self.results.append(result)
-        return result
-
-    def run_all_tests(self):
-        logger.info("=" * 60)
-        logger.info("Starting Full Flow Tests")
-        logger.info("=" * 60)
-
-        self.setup()
-
-        try:
-            self.test_full_flow()
-
-        finally:
-            self.teardown()
-
-        logger.info("=" * 60)
-        logger.info("Full Flow Tests Completed")
-        logger.info("=" * 60)
-
-        passed = sum(1 for r in self.results if r.get("success", False))
-        failed = len(self.results) - passed
-
-        total_duration = sum(r.get("duration", 0) for r in self.results)
-
-        logger.info(f"Results: {passed} passed, {failed} failed")
-        logger.info(f"Total duration: {total_duration:.2f}s")
-
-        return {
-            "total": len(self.results),
-            "passed": passed,
-            "failed": failed,
-            "total_duration": total_duration,
-            "results": self.results
-        }
+        logger.info(f"Full flow completed successfully for agent: {self.agent_name}")
 
 
 class NaturalLanguageDriver:
@@ -265,19 +137,6 @@ class NaturalLanguageDriver:
 
 
 if __name__ == "__main__":
-    test = TestFullFlow()
-    report = test.run_all_tests()
-    print("\n" + "=" * 60)
-    print("FULL FLOW TEST REPORT")
-    print("=" * 60)
-    print(f"Total: {report['total']}")
-    print(f"Passed: {report['passed']}")
-    print(f"Failed: {report['failed']}")
-    print(f"Duration: {report['total_duration']:.2f}s")
-    print("\nStep Details:")
-    for r in report['results']:
-        status = "PASS" if r.get('success', False) else "FAIL"
-        step_name = r.get('name', r.get('step', 'unknown'))
-        print(f"  [{status}] Step {r.get('step', '')} ({step_name}): {r['message']}")
-        if 'duration' in r:
-            print(f"      Duration: {r['duration']:.2f}s")
+    import unittest
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestFullFlow)
+    unittest.TextTestRunner(verbosity=2).run(suite)

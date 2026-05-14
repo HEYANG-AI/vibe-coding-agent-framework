@@ -1,10 +1,18 @@
 import time
 import logging
 from typing import Dict, Optional, Any, List
+from dataclasses import dataclass
 from core.browser_adapter import BrowserAdapter, Locator
 from core.tools import ConfigLoader
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class HealingResult:
+    success: bool
+    element: Optional[Any] = None
+    message: str = ""
 
 
 class SelfHealingEngine:
@@ -74,10 +82,11 @@ class SelfHealingEngine:
 
     def _generate_semantic_alternatives(self, name: str, original_locators: List[Locator]) -> List[Locator]:
         alternatives = []
+        import re
         
         for locator in original_locators:
             if locator.loc_type == 'xpath' and 'text()' in locator.value:
-                text_match = locator.value.match(r"text\(\)='([^']+)'")
+                text_match = re.search(r"text\(\)='([^']+)'", locator.value)
                 if text_match:
                     text = text_match.group(1)
                     
@@ -126,3 +135,32 @@ class SelfHealingEngine:
 
     def has_consistent_failures(self, name: str, threshold: int = 3) -> bool:
         return self.get_failure_count(name) >= threshold
+
+    def heal_element(self, element_name: str, locators: List[Locator]) -> HealingResult:
+        if not self.self_healing_enabled:
+            return HealingResult(success=False, message="Self-healing is disabled")
+
+        logger.info(f"Attempting to heal element: {element_name}")
+
+        try:
+            alternative_locators = self._generate_semantic_alternatives(element_name, locators)
+            
+            for alt_locator in alternative_locators:
+                try:
+                    element = self.browser.driver.find_element(alt_locator.loc_type, alt_locator.value)
+                    if element and self.browser._is_element_valid(element):
+                        logger.info(f"Healing successful: found element using alternative locator: {alt_locator}")
+                        return HealingResult(success=True, element=element, message="Element found using semantic alternative")
+                except Exception as e:
+                    logger.debug(f"Alternative locator failed: {alt_locator}, error: {e}")
+                    continue
+
+            if self.screenshot_analysis:
+                self._capture_failure_context(element_name)
+
+            self._record_failure(element_name, locators)
+            return HealingResult(success=False, message=f"Failed to heal element {element_name} after all attempts")
+
+        except Exception as e:
+            logger.error(f"Healing failed with exception: {e}")
+            return HealingResult(success=False, message=str(e))

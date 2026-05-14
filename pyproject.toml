@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:724e81a5f33c59f4c3e559b150ad54bdf87000a4ec05c79fcb6bb6755516927a
-size 439
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibe-coding-agent-framework"
+version = "1.0.0"
+description = "A Python-based automation Agent framework for building scalable, observable intelligent task processing systems."
+requires-python = ">=3.8"
+dependencies = [
+    "selenium>=4.0",
+    "pyyaml>=6.0",
+    "pytest>=7.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v"
